@@ -22,7 +22,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].[chunkhash].js'
   },
   module: {
     rules: [
@@ -53,8 +53,9 @@ module.exports = {
   between bundle and vendor entry point. If any duplicates, pull these modules/dependencies out and add them only to vendor entry point */
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor'
+      names: ['vendor', 'manifest'] // if only vendor, everytime bundle is changed, webpack will think vendor is updated too and spit out a new one
     }),
+    // add automatically HTML script tags in index.html to load JS files
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     })
