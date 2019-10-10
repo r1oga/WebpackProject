@@ -69,6 +69,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Caching',
       template: 'src/index.html'
+    }),
+    // define window variables
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })
   ],
   optimization: {
