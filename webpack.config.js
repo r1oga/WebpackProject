@@ -22,7 +22,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].[chunkhash].js'
+    filename: '[name].[contenthash].js'
   },
   module: {
     rules: [
@@ -32,7 +32,20 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  modules: 'cjs'
+                }
+              ],
+              [
+                '@babel/preset-react',
+                {
+                  modules: 'cjs'
+                }
+              ]
+            ]
           }
         }
       },
@@ -52,12 +65,22 @@ module.exports = {
   /* checks the total sum of our project files
   between bundle and vendor entry point. If any duplicates, pull these modules/dependencies out and add them only to vendor entry point */
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest'] // if only vendor, everytime bundle is changed, webpack will think vendor is updated too and spit out a new one
-    }),
     // add automatically HTML script tags in index.html to load JS files
     new HtmlWebpackPlugin({
+      title: 'Caching',
       template: 'src/index.html'
     })
-  ]
+  ],
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modues[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  }
 }
